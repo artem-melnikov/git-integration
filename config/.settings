@@ -1,0 +1,18 @@
+{
+    "projectName": "Integration with Git",
+    "username": "a.melnikov@statuskomp.com",
+    "id": "8fcccc20-b4a0-11e7-b7c7-67066e8bb266",
+    "namespace": "",
+    "orgType": "developer",
+    "loginUrl": "https://login.salesforce.com/",
+    "instanceUrl": "https://statuscomp-dev-ed.my.salesforce.com",
+    "workspace": "C:\\Users\\User\\Documents",
+    "subscription": [
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger",
+        "AuraDefinitionBundle",
+        "StaticResource"
+    ]
+}
