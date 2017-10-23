@@ -3,17 +3,17 @@ public class LabelTriggerHandler extends TriggerHandler{
 
     protected override void afterInsert(){
         Label__c newLabel = (Label__c)Trigger.new.get(0);
-        Label.createLabel(newLabel.Name, newLabel.Color__c, newLabel.Id);
+        LabelGithubRestService.createLabel(newLabel.Name, newLabel.Color__c);
     }
 
     protected override void afterDelete(){
         Label__c oldLabel = (Label__c)Trigger.old.get(0);
-        Label.deleteLabel(oldLabel.Name);
+        LabelGithubRestService.deleteLabel(oldLabel.Name);
     }
 
     protected override void afterUpdate(){
         Label__c oldLabel = (Label__c)Trigger.old.get(0);
         Label__c newLabel = (Label__c)Trigger.new.get(0);
-        Label.updateLabel(oldLabel.Name, newLabel.Name, newLabel.Color__c);
+        LabelGithubRestService.updateLabel(oldLabel.Name, newLabel.Name, newLabel.Color__c);
     }
 }
