@@ -1,42 +1,40 @@
 public with sharing class LabelGithubRestService {
-	private static String token = '3f109efdde8064ea6d6d027d222c47979c05b95d';
+	private final static String TOKEN = 'a6cf982c08991a8439056b772fc0918723c04b45';
+	private final static String API_BASE_URL = 'https://api.github.com/repos/artem-melnikov/git-integration/labels';
 
 	//create label
-	public static void createLabel(String name, String color){
-		Map<String,String> body = new Map<String,String>();
-		body.put('name', name);
-		body.put('color', color);
-
-		String endpoint = 'https://api.github.com/repos/artem-melnikov/git-integration/labels?access_token='+token,
-		method = 'POST',
-		bodyJSON = JSON.serialize(body);
-
-
-		httpRequestFunction(endpoint, method, bodyJSON);
-	}
-	//updating label
-	public static void updateLabel(String oldName, String newName, String newColor){
-		Map<String,String> body = new Map<String,String>();
-		body.put('name', newName);
-		body.put('color', newColor);
-
-		String endpoint = 'https://api.github.com/repos/artem-melnikov/git-integration/labels/'+oldName+'?access_token='+token,
-		method = 'POST',
-		bodyJSON = JSON.serialize(body);
-
-		httpRequestFunction(endpoint, method, bodyJSON);
-	}
-	//deleting label
-	public static void deleteLabel(String name){
-		String endpoint = 'https://api.github.com/repos/artem-melnikov/git-integration/labels/'+name+'?access_token='+token,
-		method = 'DELETE',
-		bodyJSON = '';
-
-		httpRequestFunction(endpoint, method, bodyJSON);
-	}
-	//request function
 	@future(callout=true)
-	private static void httpRequestFunction(String endpoint, String methodName, String body){
+	public static void createLabel(String name, String color){
+		String endpoint = API_BASE_URL+'?access_token='+TOKEN,
+		method = 'POST',
+		body = creationBody(name, color);
+		HttpResponse res = httpRequestFunction(endpoint, method, body);
+	}
+
+
+	//updating label
+	@future(callout=true)
+	public static void updateLabel(String oldName, String newName, String newColor){
+		String endpoint = API_BASE_URL+'/'+oldName+'?access_token='+TOKEN,
+		method = 'POST',
+		body = creationBody(newName,newColor);
+		HttpResponse res = httpRequestFunction(endpoint, method, body);
+	}
+
+
+	//deleting label
+	@future(callout=true)
+	public static void deleteLabel(String name){
+		String endpoint = API_BASE_URL+'/'+name+'?access_token='+TOKEN,
+		method = 'DELETE',
+		body = '';
+	 HttpResponse res = httpRequestFunction(endpoint, method, body);
+	}
+
+
+	//request function
+	private static HttpResponse httpRequestFunction(String endpoint, String methodName, String body){
+		system.debug('ENDPOINT: '+ endpoint);
 		HttpRequest req = new HttpRequest();
 		req.setEndpoint(endpoint);
 		req.setMethod(methodName);
@@ -46,6 +44,16 @@ public with sharing class LabelGithubRestService {
 
 		Http http = new Http();
 		HttpResponse res = http.send(req);
-		system.debug('STATUS: '+res.getStatusCode());
+		system.debug('STATUS: '+ res.getStatusCode()+'\t'+res.getStatus());
+		return res;
+	}
+
+
+	//function which create body of request
+	private static String creationBody(String name, String color){
+		Map<String,String> body = new Map<String,String>();
+		body.put('name', name);
+		body.put('color', color);
+		return JSON.serialize(body);
 	}
 }
