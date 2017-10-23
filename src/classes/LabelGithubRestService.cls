@@ -1,10 +1,31 @@
-public with sharing class LabelGithubRestService {
-	private final static String TOKEN = 'a6cf982c08991a8439056b772fc0918723c04b45';
+public with sharing class LabelGithubRestService implements GitHubRestServiceInterface{
+	private final String CREATE_LABEL = 'createLabel';
+	private final String UPDATE_LABEL = 'updateLabel';
+	private final String DELETE_LABEL = 'deleteLabel';
+
+	private final static String TOKEN = '84d679f0cba4040f078e1b711350cc0efcde8fa4';
 	private final static String API_BASE_URL = 'https://api.github.com/repos/artem-melnikov/git-integration/labels';
+
+	public void request(BaseProvider.BaseRequest request){
+		System.debug('LabelGithubRestService');
+
+		Map<String, Object> paramsMap = (Map<String, Object>)JSON.deserializeUntyped(request.params);
+
+        if (request.methodName == CREATE_LABEL) {
+            createLabel((String)paramsMap.get('name'), (String)paramsMap.get('color'));
+        }
+        if (request.methodName == UPDATE_LABEL) {
+            updateLabel((String)paramsMap.get('oldName'), (String)paramsMap.get('name'), (String)paramsMap.get('color'));
+        }
+		if (request.methodName == DELETE_LABEL) {
+            deleteLabel((String)paramsMap.get('name'));
+        }
+	}
+
 
 	//create label
 	@future(callout=true)
-	public static void createLabel(String name, String color){
+	private static void createLabel(String name, String color){
 		String endpoint = API_BASE_URL+'?access_token='+TOKEN,
 		method = 'POST',
 		body = creationBody(name, color);
@@ -14,17 +35,16 @@ public with sharing class LabelGithubRestService {
 
 	//updating label
 	@future(callout=true)
-	public static void updateLabel(String oldName, String newName, String newColor){
+	private static void updateLabel(String oldName, String newName, String newColor){
 		String endpoint = API_BASE_URL+'/'+oldName+'?access_token='+TOKEN,
 		method = 'POST',
 		body = creationBody(newName,newColor);
 		HttpResponse res = httpRequestFunction(endpoint, method, body);
 	}
 
-
 	//deleting label
 	@future(callout=true)
-	public static void deleteLabel(String name){
+	private static void deleteLabel(String name){
 		String endpoint = API_BASE_URL+'/'+name+'?access_token='+TOKEN,
 		method = 'DELETE',
 		body = '';
